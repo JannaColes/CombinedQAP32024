@@ -13,28 +13,34 @@ const getAllStudents = async () => {
   try {
     const result = await client.query('SELECT * FROM students');
     return result.rows;
+  } catch (error) {
+    console.error('Error fetching all students:', error);
   } finally {
     client.release();
   }
 };
 
-const addStudent = async (student) => {
+const addStudent = async (name, email, age, dob) => {
   const client = await pool.connect();
   try {
-    const { name, email, age, dob } = student;
     const result = await client.query('INSERT INTO students (name, email, age, dob) VALUES ($1, $2, $3, $4) RETURNING *', [name, email, age, dob]);
     return result.rows[0];
+  } catch (error) { 
+    console.error('Error adding student:', error);
+    throw error; 
   } finally {
     client.release();
   }
 };
 
-const updateStudent = async (id, updatedStudent) => {
+const updateStudent = async (id, name, email, age, dob) => {
   const client = await pool.connect();
   try {
-    const { name, email, age, dob } = updatedStudent;
     const result = await client.query('UPDATE students SET name = $1, email = $2, age = $3, dob = $4 WHERE id = $5 RETURNING *', [name, email, age, dob, id]);
     return result.rows[0];
+  } catch (error) {
+    console.error('Error updating student:', error);
+    throw error;  
   } finally {
     client.release();
   }
