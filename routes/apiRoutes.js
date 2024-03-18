@@ -33,6 +33,16 @@ router.put('/students/:id', async (req, res) => {
   }
 });
 
+router.patch('/students/:id', async (req, res) => {
+  try {
+    const patchedStudent = await studentDal.patchStudent(req.params.id, req.body);
+    res.json(patchedStudent);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 router.delete('/students/:id', async (req, res) => {
   try {
     await studentDal.deleteStudent(req.params.id);

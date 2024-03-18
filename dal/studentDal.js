@@ -40,6 +40,27 @@ const updateStudent = async (id, updatedStudent) => {
   }
 };
 
+const patchStudent = async (id, updatedFields) => {
+  const client = await pool.connect();
+  try {
+    let updateQuery = 'UPDATE students SET ';
+    const values = [];
+    let index = 1;
+    for (const [key, value] of Object.entries(updatedFields)) {
+      updateQuery += `${key} = $${index}, `;
+      values.push(value);
+      index++;
+    }
+    updateQuery = updateQuery.slice(0, -2);
+    updateQuery += ` WHERE id = $${index} RETURNING *`;
+    values.push(id);
+    const result = await client.query(updateQuery, values);
+    return result.rows[0];
+  } finally {
+    client.release();
+  }
+};
+
 const deleteStudent = async (id) => {
   const client = await pool.connect();
   try {
@@ -53,5 +74,6 @@ module.exports = {
   getAllStudents,
   addStudent,
   updateStudent,
+  patchStudent,
   deleteStudent
 };
