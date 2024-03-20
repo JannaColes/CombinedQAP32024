@@ -1,7 +1,46 @@
-<%- include('./partials/head.ejs') %>
-<%- include('./partials/nav.ejs') %>
-<div class="container">
-    <h1>FullStack Sample</h1>
-    <h2>Welcome to the index page <%= name %>.</h2>
-</div>
-<%- include('./partials/foot.ejs') %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Students</title>
+</head>
+<body>
+    <h1>Students</h1>
+    <form action="/students" method="POST">
+        <input type="text" name="name" placeholder="Name" required>
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="number" name="age" placeholder="Age">
+        <input type="date" name="dob" placeholder="Date of Birth">
+        <button type="submit">Add Student</button>
+    </form>
+    <ul>
+        <% students.forEach(student => { %>
+            <li>
+                <strong><%= student.name %></strong> - <%= student.email %> - <%= student.age %> - <%= student.dob %>
+                <!-- Delete button with confirmation -->
+                <form action="/students/<%= student.id %>?_method=DELETE" method="POST" style="display:inline;" onsubmit="return confirmDelete()">
+                    <button type="submit">Delete</button>
+                </form>
+                <!-- Edit button with confirmation -->
+                <button onclick="editStudent('<%= student.id %>')">Edit</button>
+            </li>
+        <% }); %>
+    </ul>
+
+    <!-- Script for confirmation dialogs -->
+    <script>
+        // Function to display confirmation dialog for delete
+        function confirmDelete() {
+            return confirm("Are you sure you want to delete this student?");
+        }
+
+        // Function to display confirmation dialog for edit
+        function editStudent(studentId) {
+            if (confirm("Are you sure you want to edit this student?")) {
+                window.location.href = `/students/${studentId}/edit`;
+            }
+        }
+    </script>
+</body>
+</html>
